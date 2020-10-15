@@ -1,11 +1,45 @@
-output "data_lake_summary" { value = module.data_lake.summary }
-module "data_lake" {
-  # BOILERPLATE HEADER (NO NEED TO CHANGE):
-  source        = "git::https://github.com/slalom-ggp/dataops-infra//catalog/aws/data-lake?ref=main"
-  name_prefix   = local.name_prefix
-  environment   = module.env.environment
-  resource_tags = local.resource_tags
+variable "bucketname" {
+    type = string
+    default = "cde-coloradocovid13"
+}
 
-  # For documentation and additional options, see:
-  # https://infra.dataops.tk/catalog/aws/data-lake
+
+resource "aws_s3_bucket" "coloradoCovid_bucket" {
+  bucket = var.bucketname
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_object" "NYT_us" {
+    bucket   = aws_s3_bucket.coloradoCovid_bucket.id
+    acl      = "private"
+    key      = "Landing/NYT/us.csv"
+    source   = "Data/NYT/us.csv" 
+}
+
+resource "aws_s3_bucket_object" "NYT_counties" {
+    bucket   = aws_s3_bucket.coloradoCovid_bucket.id
+    acl      = "private"
+    key      = "Landing/NYT/us-counties.csv"
+    source   = "Data/NYT/us-counties.csv" 
+}
+
+resource "aws_s3_bucket_object" "NYT_states" {
+    bucket   = aws_s3_bucket.coloradoCovid_bucket.id
+    acl      = "private"
+    key      = "Landing/NYT/us-states.csv"
+    source   = "Data/NYT/us-states.csv" 
+}
+
+resource "aws_s3_bucket_object" "JHU-TS" {
+    bucket   = aws_s3_bucket.coloradoCovid_bucket.id
+    acl      = "private"
+    key      = "Landing/JHU/10-14-2020.csv"
+    source   = "Data/JHU/10-14-2020.csv" 
+}
+
+resource "aws_s3_bucket_object" "coloradoCovid" {
+    bucket   = aws_s3_bucket.coloradoCovid_bucket.id
+    acl      = "private"
+    key      = "Landing/ColoradoCovid/10-14-2020.csv"
+    source   = "Data/ColoradoCovid/10-14-2020.csv" 
 }
